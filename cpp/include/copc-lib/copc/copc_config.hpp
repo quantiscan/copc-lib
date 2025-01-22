@@ -47,7 +47,7 @@ class CopcConfigWriter : public CopcConfig
   public:
     CopcConfigWriter(const int8_t &point_format_id, const Vector3 &scale = Vector3::DefaultScale(),
                      const Vector3 &offset = Vector3::DefaultOffset(), const std::string &wkt = "",
-                     const las::EbVlr &extra_bytes_vlr = las::EbVlr(0), bool has_extended_stats = false);
+                     const las::EbVlr &extra_bytes_vlr = las::EbVlr(), bool has_extended_stats = false);
 
     // Copy Constructor
     CopcConfigWriter(const CopcConfigWriter &copc_config_writer)
