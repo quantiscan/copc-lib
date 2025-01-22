@@ -176,8 +176,7 @@ PYBIND11_MODULE(_core, m)
         .def(
             "__truediv__", [](const Vector3 &vec, const Vector3 &other) { return vec / other; }, py::is_operator())
         .def(
-            "__floordiv__",
-            [](const Vector3 &vec, const Vector3 &other)
+            "__floordiv__", [](const Vector3 &vec, const Vector3 &other)
             { return Vector3(std::floor(vec.x / other.x), std::floor(vec.y / other.y), std::floor(vec.z / other.z)); },
             py::is_operator())
         .def(
@@ -190,10 +189,8 @@ PYBIND11_MODULE(_core, m)
         .def(
             "__truediv__", [](const Vector3 &vec, const double &d) { return vec / d; }, py::is_operator())
         .def(
-            "__floordiv__",
-            [](const Vector3 &vec, const double &d)
-            { return Vector3(std::floor(vec.x / d), std::floor(vec.y / d), std::floor(vec.z / d)); },
-            py::is_operator())
+            "__floordiv__", [](const Vector3 &vec, const double &d)
+            { return Vector3(std::floor(vec.x / d), std::floor(vec.y / d), std::floor(vec.z / d)); }, py::is_operator())
         .def(
             "__add__", [](const Vector3 &vec, const double &d) { return vec + d; }, py::is_operator())
         .def(
@@ -408,6 +405,28 @@ PYBIND11_MODULE(_core, m)
         .def("GetNodesWithinResolution", &Reader::GetNodesWithinResolution, py::arg("resolution"))
         .def("ValidateSpatialBounds", &Reader::ValidateSpatialBounds, py::arg("verbose") = false);
 
+    py::class_<las::EbVlr::ebfield>(m, "EbField")
+        .def(py::init<>())
+        .def_readwrite("data_type", &las::EbVlr::ebfield::data_type)
+        .def_readwrite("options", &las::EbVlr::ebfield::options)
+        .def_readwrite("name", &las::EbVlr::ebfield::name)
+        .def_property(
+            "no_data", [](const las::EbVlr::ebfield &self) { return self.no_data[0]; },
+            [](las::EbVlr::ebfield &self, double value) { self.no_data[0] = value; })
+        .def_property(
+            "minval", [](const las::EbVlr::ebfield &self) { return self.minval[0]; },
+            [](las::EbVlr::ebfield &self, double value) { self.minval[0] = value; })
+        .def_property(
+            "maxval", [](const las::EbVlr::ebfield &self) { return self.maxval[0]; },
+            [](las::EbVlr::ebfield &self, double value) { self.maxval[0] = value; })
+        .def_property(
+            "scale", [](const las::EbVlr::ebfield &self) { return self.scale[0]; },
+            [](las::EbVlr::ebfield &self, double value) { self.scale[0] = value; })
+        .def_property(
+            "offset", [](const las::EbVlr::ebfield &self) { return self.offset[0]; },
+            [](las::EbVlr::ebfield &self, double value) { self.offset[0] = value; })
+        .def_readwrite("description", &las::EbVlr::ebfield::description);
+
     py::class_<las::EbVlr>(m, "EbVlr").def(py::init<int>()).def_readwrite("items", &las::EbVlr::items);
 
     py::class_<FileWriter>(m, "FileWriter")
@@ -533,8 +552,6 @@ PYBIND11_MODULE(_core, m)
                 h.points_by_return = t[18].cast<std::array<uint64_t, 15>>();
                 return h;
             }));
-
-    py::class_<las::EbVlr::ebfield>(m, "EbField").def(py::init<>());
 
     py::class_<las::LazConfig, std::shared_ptr<las::LazConfig>>(m, "LazConfig")
         .def_property_readonly("las_header", &las::LazConfig::LasHeader)
