@@ -68,7 +68,7 @@ las::WktVlr BaseReader::ReadWktVlr(std::map<uint64_t, las::VlrHeader> &vlrs)
     auto offset = FetchVlr(vlrs, "LASF_Projection", 2112);
     if (offset != 0)
     {
-        in_stream_->seekg(offset + las::EVLR_HEADER_SIZE);
+        in_stream_->seekg(offset + (vlrs[offset].evlr_flag ? las::EVLR_HEADER_SIZE : las::VLR_HEADER_SIZE));
         return las::WktVlr::create(*in_stream_, static_cast<int>(vlrs[offset].data_length));
     }
     return las::WktVlr();
