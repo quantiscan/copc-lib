@@ -9,8 +9,6 @@ CopcConfig::CopcConfig(const int8_t &point_format_id, const Vector3 &scale, cons
     : LazConfig(point_format_id, scale, offset, wkt, extra_bytes_vlr, true)
 {
     copc_info_ = std::make_shared<copc::CopcInfo>();
-    copc_extents_ =
-        std::make_shared<copc::CopcExtents>(point_format_id, extra_bytes_vlr.items.size(), has_extended_stats);
 }
 
 CopcConfigWriter::CopcConfigWriter(const int8_t &point_format_id, const Vector3 &scale, const Vector3 &offset,

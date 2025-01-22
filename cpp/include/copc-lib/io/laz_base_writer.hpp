@@ -33,7 +33,7 @@ class BaseWriter
 
     // 8 bytes for the chunk table offset
     uint64_t FirstChunkOffset() const { return OffsetToPointData() + sizeof(uint64_t); };
-    void WriteLasHeader(bool extended_stats_flag);
+    void WriteLasHeader();
     void WriteLazAndEbVlrs();
     void WriteChunkTable();
     void WriteWKT();

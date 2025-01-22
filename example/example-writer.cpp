@@ -246,17 +246,6 @@ void NewFileExample()
     FileWriter writer("new-copc.copc.laz", cfg);
     auto header = writer.CopcConfig()->LasHeader();
 
-    // Set the COPC Extents
-    auto extents = writer.CopcConfig()->CopcExtents();
-
-    extents->Intensity()->minimum = 0;
-    extents->Intensity()->maximum = 10000;
-    extents->Intensity()->mean = 50;
-    extents->Intensity()->var = 5;
-
-    extents->Classification()->minimum = 5;
-    extents->Classification()->maximum = 201;
-
     // First we'll add a root node
     VoxelKey key(0, 0, 0, 0);
     auto points = RandomPoints(key, *header, NUM_POINTS);

@@ -39,7 +39,7 @@ TEST_CASE("Test constructor", "[LasHeader]")
                                   test_offset, false);
 
         REQUIRE(laz_header.IsCopc() == false);
-        REQUIRE(laz_header.ToLazPerf(380, 0, 390, 1, 0, false).vlr_count == 1);
+        REQUIRE(laz_header.ToLazPerf(380, 0, 390, 1, false).vlr_count == 1);
 
         // In the case of a COPC file, the LAS header should have a true COPC flag, and three VLRs when no EBs are
         // present
@@ -48,7 +48,7 @@ TEST_CASE("Test constructor", "[LasHeader]")
                                    test_offset, true);
 
         REQUIRE(copc_header.IsCopc() == true);
-        REQUIRE(copc_header.ToLazPerf(380, 0, 390, 1, 0, false).vlr_count == 3);
+        REQUIRE(copc_header.ToLazPerf(380, 0, 390, 1, false).vlr_count == 2);
     }
 
     SECTION("GPS Time Type Bit")
@@ -71,7 +71,7 @@ TEST_CASE("Test reader and conversions", "[LasHeader]")
         auto las_header = reader.CopcConfig().LasHeader();
         auto lazperf_header = las_header.ToLazPerf(
             las_header.PointOffset(), las_header.PointCount(), las_header.EvlrOffset(), las_header.EvlrCount(),
-            las_header.EbByteSize(), reader.CopcConfig().CopcExtents().HasExtendedStats());
+            las_header.EbByteSize());
         // Correct the bitshift happening in ToLazPerf for test purpose
         lazperf_header.point_format_id = las_header.PointFormatId();
         auto las_header_origin = las::LasHeader::FromLazPerf(lazperf_header);

@@ -1,16 +1,17 @@
-import random
-import copclib as copc
 import math
 import os
+import random
+
+import copclib as copc
 
 random.seed(0)
 DATADIRECTORY = os.path.join(os.path.dirname(__file__), "..", "test", "data")
 if not os.path.exists(os.path.join(os.path.join(DATADIRECTORY, "out"))):
     os.makedirs(os.path.join(DATADIRECTORY, "out"))
 
+
 # In this example, we'll filter the autzen dataset to only contain depth levels 0-3.
 def TrimFileExample(compressor_example_flag):
-
     # We'll get our point data from this file
     reader = copc.FileReader(os.path.join(DATADIRECTORY, "autzen-classified.copc.laz"))
 
@@ -188,7 +189,6 @@ NUM_POINTS = 3000
 
 # This function will generate `NUM_POINTS` random points within the voxel bounds
 def RandomPoints(key, las_header, number_points):
-
     # Voxel cube dimensions will be calculated from the maximum spacing of the file
     span = max(
         {
@@ -234,7 +234,6 @@ def RandomPoints(key, las_header, number_points):
 
 # In this example, we'll create our own file from scratch
 def NewFileExample():
-
     # Create our new file with the specified format, scale, and offset
     cfg = copc.CopcConfigWriter(
         point_format_id=8,
@@ -257,17 +256,6 @@ def NewFileExample():
     # writer = copc.FileWriter("new-copc.copc.laz", cfg,None,None,None,None,None)
     # writer = copc.FileWriter("new-copc.copc.laz", cfg,(1,1,1),(1,1,1),"test",)
     header = writer.copc_config.las_header
-
-    # Set the COPC Extents
-    extents = writer.copc_config.copc_extents
-
-    extents.intensity.minimum = 0
-    extents.intensity.maximum = 10000
-    extents.intensity.mean = 50
-    extents.intensity.var = 5
-
-    extents.classification.minimum = 5
-    extents.classification.maximum = 201
 
     # First we'll add a root node
     key = copc.VoxelKey(0, 0, 0, 0)

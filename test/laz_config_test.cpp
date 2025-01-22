@@ -69,15 +69,13 @@ TEST_CASE("CopcConfig_To_LazConfig")
 
     CopcInfo copc_info;
     copc_info.spacing = test_spacing;
-    CopcExtents copc_extents(point_format_id, num_eb_items);
-    copc_extents.Intensity()->minimum = test_intensity_min;
-    copc_extents.Intensity()->maximum = test_intensity_max;
+
     std::string wkt(test_wkt);
 
     las::LasHeader header(point_format_id, las::PointBaseByteSize(point_format_id) + test_extra_bytes_vlr.size(),
                           test_scale, test_offset, true);
 
-    CopcConfig copc_cfg(header, copc_info, copc_extents, wkt, test_extra_bytes_vlr);
+    CopcConfig copc_cfg(header, copc_info, wkt, test_extra_bytes_vlr);
     las::LazConfigWriter cfg(copc_cfg);
 
     REQUIRE(cfg.LasHeader()->PointFormatId() == point_format_id);

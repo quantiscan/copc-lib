@@ -5,7 +5,6 @@
 #include <stdexcept>
 
 #include "copc-lib/copc/copc_config.hpp"
-#include "copc-lib/copc/extents.hpp"
 #include "copc-lib/las/header.hpp"
 #include "copc-lib/las/vlr.hpp"
 

@@ -2,7 +2,6 @@
 #define COPCLIB_COPC_INFO_H_
 #include <string>
 
-#include "copc-lib/copc/extents.hpp"
 #include <lazperf/vlr.hpp>
 
 namespace copc
@@ -18,7 +17,7 @@ class CopcInfo
 
     CopcInfo(const lazperf::copc_info_vlr &copc_info_vlr);
 
-    lazperf::copc_info_vlr ToLazPerf(const CopcExtent &gps_time) const;
+    lazperf::copc_info_vlr ToLazPerf() const;
 
     std::string ToString() const;
     friend std::ostream &operator<<(std::ostream &os, CopcInfo const &value)

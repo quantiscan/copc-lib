@@ -64,8 +64,6 @@ class Reader : public BaseIO, public BaseReader
     std::vector<Node> GetNodesIntersectBox(const Box &box, double resolution = 0);
     las::Points GetPointsWithinBox(const Box &box, double resolution = 0);
     bool ValidateSpatialBounds(bool verbose = false);
-    // TODO: Add a function to validate extents.
-
     copc::CopcConfig CopcConfig() { return config_; }
 
   protected:
@@ -75,8 +73,6 @@ class Reader : public BaseIO, public BaseReader
 
     // Finds and loads the COPC vlr
     CopcInfo ReadCopcInfoVlr(std::map<uint64_t, las::VlrHeader> &vlrs);
-    // Finds and loads the COPC vlr
-    CopcExtents ReadCopcExtentsVlr(std::map<uint64_t, las::VlrHeader> &vlrs, const las::EbVlr &eb_vlr) const;
 
     std::vector<Entry> ReadPage(std::shared_ptr<Internal::PageInternal> page) override;
 };
