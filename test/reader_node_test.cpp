@@ -2,7 +2,7 @@
 #include <fstream>
 #include <limits>
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <copc-lib/io/copc_reader.hpp>
 
 using namespace copc;
@@ -43,7 +43,6 @@ TEST_CASE("GetPointData Test", "[Reader] ")
 
             auto point_vec = reader.GetPointData(hier_entry);
             REQUIRE(!point_vec.empty());
-            auto point_buff = point_vec.data();
         }
     }
 }

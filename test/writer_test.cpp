@@ -2,7 +2,7 @@
 #include <sstream>
 #include <string>
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <copc-lib/geometry/vector3.hpp>
 #include <copc-lib/io/copc_reader.hpp>
 #include <copc-lib/io/copc_writer.hpp>
@@ -157,7 +157,8 @@ TEST_CASE("Writer Config Tests", "[Writer]")
             Vector3 orig_offset(10, 10, 10);
             std::string orig_wkt("orig_wkt");
             bool orig_has_extended_stats(false);
-            las::EbVlr orig_eb_vlr(1);
+            las::EbVlr orig_eb_vlr;
+            orig_eb_vlr.addField(lazperf::eb_vlr::ebfield());
             std::string orig_guid("orig_guid");
             double orig_spacing(10);
             double orig_intensity(23.5);
@@ -182,7 +183,9 @@ TEST_CASE("Writer Config Tests", "[Writer]")
             Vector3 new_offset(100, 100, 100);
             std::string new_wkt("new_wkt");
             bool new_has_extended_stats(true);
-            las::EbVlr new_eb_vlr(2);
+            las::EbVlr new_eb_vlr;
+            new_eb_vlr.addField(lazperf::eb_vlr::ebfield());
+            new_eb_vlr.addField(lazperf::eb_vlr::ebfield());
             // Update Point Format ID
             {
                 FileWriter copy_writer(file_path, cfg, new_point_format_id);
@@ -672,10 +675,17 @@ TEST_CASE("Writer EBs", "[Writer]")
     SECTION("Data type 0")
     {
         stringstream out_stream;
-        las::EbVlr eb_vlr(1); // Always initialize with the ebCount constructor
-        // don't make ebfields yourself unless you set their names correctly
-        eb_vlr.items[0].data_type = 0;
-        eb_vlr.items[0].options = 4;
+        las::EbVlr eb_vlr;
+        eb_vlr.addField(
+            []()
+            {
+                auto field = lazperf::eb_vlr::ebfield();
+                field.data_type = 0;
+                field.options = 4;
+                field.name = "FIELD_0";
+                return field;
+            }());
+
         CopcConfigWriter cfg(7, {}, {}, {}, eb_vlr);
         Writer writer(out_stream, cfg);
 
@@ -698,8 +708,15 @@ TEST_CASE("Writer EBs", "[Writer]")
     SECTION("Data type 29")
     {
         stringstream out_stream;
-        las::EbVlr eb_vlr(1);
-        eb_vlr.items[0].data_type = 29;
+        las::EbVlr eb_vlr;
+        eb_vlr.addField(
+            []()
+            {
+                auto field = lazperf::eb_vlr::ebfield();
+                field.data_type = 29;
+                return field;
+            }());
+
         CopcConfigWriter cfg(7, {}, {}, {}, eb_vlr);
         Writer writer(out_stream, cfg);
 

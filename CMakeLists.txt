@@ -14,8 +14,8 @@ include(GNUInstallDirs)
 # Shared/Dynamic or Static library?
 option(BUILD_SHARED_LIBS "Build libraries as shared as opposed to static" ON)
 
-option(WITH_TESTS "Build test and example files." OFF)
-option(WITH_PYTHON "Build python bindings." OFF)
+option(WITH_TESTS "Build test and example files." ON)
+option(WITH_PYTHON "Build python bindings." ON)
 
 if (SKBUILD)
     set(WITH_PYTHON ON)

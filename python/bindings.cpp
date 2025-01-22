@@ -555,7 +555,7 @@ PYBIND11_MODULE(_core, m)
             py::init<const int8_t &, const Vector3 &, const Vector3 &, const std::string &, const las::EbVlr &, bool>(),
             py::arg("point_format_id"), py::arg("scale") = Vector3::DefaultScale(),
             py::arg("offset") = Vector3::DefaultOffset(), py::arg("wkt") = "",
-            py::arg("extra_bytes_vlr") = las::EbVlr(0), py::arg("has_extended_stats") = false)
+            py::arg("extra_bytes_vlr") = las::EbVlr(), py::arg("has_extended_stats") = false)
         .def(py::init<const CopcConfig &>())
         .def_property_readonly("las_header", py::overload_cast<>(&CopcConfigWriter::LasHeader))
         .def_property_readonly("copc_info", py::overload_cast<>(&CopcConfigWriter::CopcInfo))
@@ -569,7 +569,7 @@ PYBIND11_MODULE(_core, m)
         .def(py::init<const int8_t &, const Vector3 &, const Vector3 &, const std::string &, const las::EbVlr &>(),
              py::arg("point_format_id"), py::arg("scale") = Vector3::DefaultScale(),
              py::arg("offset") = Vector3::DefaultOffset(), py::arg("wkt") = "",
-             py::arg("extra_bytes_vlr") = las::EbVlr(0))
+             py::arg("extra_bytes_vlr") = las::EbVlr())
         .def(py::init<const las::LazConfig &>())
         .def(py::init<const CopcConfig &>())
         .def_property_readonly("las_header", py::overload_cast<>(&las::LazConfigWriter::LasHeader))

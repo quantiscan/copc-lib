@@ -9,7 +9,7 @@ file(GLOB ${TEST_TARGET_NAME}_SRC
 )
 
 add_executable(${TEST_TARGET_NAME} ${${TEST_TARGET_NAME}_SRC})
-target_link_libraries(${TEST_TARGET_NAME} COPCLIB::copc-lib Catch2::Catch2)
+target_link_libraries(${TEST_TARGET_NAME} COPCLIB::copc-lib Catch2::Catch2WithMain)
 
 include(CTest)
 include(Catch)

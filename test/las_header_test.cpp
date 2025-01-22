@@ -1,6 +1,6 @@
 #include <vector>
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <copc-lib/io/copc_reader.hpp>
 #include <copc-lib/las/header.hpp>
 #include <copc-lib/las/point.hpp>
@@ -19,10 +19,16 @@ TEST_CASE("Test constructor", "[LasHeader]")
     Vector3 test_offset(50, 50, 50);
     std::string test_wkt = "test_wkt";
 
-    las::EbVlr test_extra_bytes_vlr(num_eb_items);
-    test_extra_bytes_vlr.items[0].data_type = 0;
-    test_extra_bytes_vlr.items[0].options = 4;
-    test_extra_bytes_vlr.items[0].name = "eb1";
+    las::EbVlr test_extra_bytes_vlr;
+    test_extra_bytes_vlr.addField(
+        []()
+        {
+            auto field = lazperf::eb_vlr::ebfield();
+            field.data_type = 0;
+            field.options = 4;
+            field.name = "eb1";
+            return field;
+        }());
 
     SECTION("COPC flag")
     {

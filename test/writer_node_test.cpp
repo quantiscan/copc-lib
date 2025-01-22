@@ -1,5 +1,5 @@
 #include "data/test_data.h"
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <copc-lib/io/copc_reader.hpp>
 #include <copc-lib/io/copc_writer.hpp>
 #include <sstream>

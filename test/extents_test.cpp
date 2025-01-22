@@ -1,7 +1,7 @@
 #include <limits>
 #include <string>
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <copc-lib/copc/extents.hpp>
 #include <copc-lib/io/copc_reader.hpp>
 #include <copc-lib/io/copc_writer.hpp>
@@ -71,9 +71,21 @@ TEST_CASE("COPC Extents", "[CopcExtents]")
     {
         string file_path = "writer_test.copc.laz";
         {
-            las::EbVlr eb_vlr(2);
-            eb_vlr.items[0].data_type = 29; // byte size 12
-            eb_vlr.items[1].data_type = 29; // byte size 12
+            las::EbVlr eb_vlr;
+            eb_vlr.addField(
+                []()
+                {
+                    auto field = lazperf::eb_vlr::ebfield();
+                    field.data_type = 29;
+                    return field;
+                }());
+            eb_vlr.addField(
+                []()
+                {
+                    auto field = lazperf::eb_vlr::ebfield();
+                    field.data_type = 29;
+                    return field;
+                }());
 
             CopcConfigWriter cfg(7, {}, {}, {}, eb_vlr);
             FileWriter writer(file_path, cfg);
@@ -109,8 +121,14 @@ TEST_CASE("COPC Extents", "[CopcExtents]")
     {
         string file_path = "writer_test.copc.laz";
         {
-            las::EbVlr eb_vlr(1);
-            eb_vlr.items[0].data_type = 29; // byte size 12
+            las::EbVlr eb_vlr;
+            eb_vlr.addField(
+                []()
+                {
+                    auto field = lazperf::eb_vlr::ebfield();
+                    field.data_type = 29;
+                    return field;
+                }());
 
             CopcConfigWriter cfg(7, {}, {}, {}, eb_vlr, true);
             FileWriter writer(file_path, cfg);
