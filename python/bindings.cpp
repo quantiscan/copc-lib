@@ -596,6 +596,10 @@ PYBIND11_MODULE(_core, m)
             py::arg("offset") = Vector3::DefaultOffset(), py::arg("wkt") = "",
             py::arg("extra_bytes_vlr") = las::EbVlr(), py::arg("has_extended_stats") = false)
         .def(py::init<const CopcConfig &>())
+        .def(py::init<const las::LasHeader &, const copc::CopcInfo &, const copc::CopcExtents &, const std::string &,
+                      const las::EbVlr &>(),
+             py::arg("header"), py::arg("copc_info"), py::arg("copc_extents"), py::arg("wkt"),
+             py::arg("extra_bytes_vlr"))
         .def_property_readonly("las_header", py::overload_cast<>(&CopcConfigWriter::LasHeader))
         .def_property_readonly("copc_info", py::overload_cast<>(&CopcConfigWriter::CopcInfo))
         .def_property_readonly("copc_extents", py::overload_cast<>(&CopcConfigWriter::CopcExtents))
