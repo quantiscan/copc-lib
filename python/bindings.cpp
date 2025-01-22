@@ -488,6 +488,8 @@ PYBIND11_MODULE(_core, m)
         .def_readwrite("spacing", &CopcInfo::spacing)
         .def_readwrite("root_hier_offset", &CopcInfo::root_hier_offset)
         .def_readwrite("root_hier_size", &CopcInfo::root_hier_size)
+        .def_readwrite("gpstime_minimum", &CopcInfo::gpstime_minimum)
+        .def_readwrite("gpstime_maximum", &CopcInfo::gpstime_maximum)
         .def("__str__", &CopcInfo::ToString)
         .def("__repr__", &CopcInfo::ToString);
 
