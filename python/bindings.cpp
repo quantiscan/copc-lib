@@ -106,7 +106,8 @@ PYBIND11_MODULE(_core, m)
         .def_property_readonly("point_offset", &las::LasHeader::PointOffset)
         .def_property_readonly("vlr_count", &las::LasHeader::VlrCount)
         .def_property_readonly("point_format_id", &las::LasHeader::PointFormatId)
-        .def_property_readonly("point_record_length", &las::LasHeader::PointRecordLength)
+        .def_property("point_record_length", py::overload_cast<>(&las::LasHeader::PointRecordLength, py::const_),
+                      py::overload_cast<uint16_t>(&las::LasHeader::PointRecordLength))
         .def_property_readonly("scale", &las::LasHeader::Scale)
         .def_property_readonly("offset", &las::LasHeader::Offset)
         .def_readwrite("max", &las::LasHeader::max)
@@ -333,6 +334,86 @@ PYBIND11_MODULE(_core, m)
         .def_property_readonly("point_record_length", &las::Point::PointRecordLength)
         .def_property("extra_bytes", py::overload_cast<>(&las::Point::ExtraBytes, py::const_),
                       py::overload_cast<const std::vector<uint8_t> &>(&las::Point::ExtraBytes))
+        .def("GetExtraBytesFieldUInt8",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &>(
+                 &las::Point::GetExtraBytesField<std::uint8_t>, py::const_),
+             py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldInt8",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &>(
+                 &las::Point::GetExtraBytesField<std::int8_t>, py::const_),
+             py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldUInt16",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &>(
+                 &las::Point::GetExtraBytesField<std::uint16_t>, py::const_),
+             py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldInt16",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &>(
+                 &las::Point::GetExtraBytesField<std::int16_t>, py::const_),
+             py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldUInt32",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &>(
+                 &las::Point::GetExtraBytesField<std::uint32_t>, py::const_),
+             py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldInt32",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &>(
+                 &las::Point::GetExtraBytesField<std::int32_t>, py::const_),
+             py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldUInt64",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &>(
+                 &las::Point::GetExtraBytesField<std::uint64_t>, py::const_),
+             py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldInt64",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &>(
+                 &las::Point::GetExtraBytesField<std::int64_t>, py::const_),
+             py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldFloat32",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &>(&las::Point::GetExtraBytesField<float>,
+                                                                              py::const_),
+             py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldFloat64",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &>(&las::Point::GetExtraBytesField<double>,
+                                                                              py::const_),
+             py::arg("vlr"), py::arg("name"))
+        .def("SetExtraBytesFieldUInt8",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &, std::uint8_t>(
+                 &las::Point::SetExtraBytesField<std::uint8_t>),
+             py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldInt8",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &, std::int8_t>(
+                 &las::Point::SetExtraBytesField<std::int8_t>),
+             py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldUInt16",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &, std::uint16_t>(
+                 &las::Point::SetExtraBytesField<std::uint16_t>),
+             py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldInt16",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &, std::int16_t>(
+                 &las::Point::SetExtraBytesField<std::int16_t>),
+             py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldUInt32",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &, std::uint32_t>(
+                 &las::Point::SetExtraBytesField<std::uint32_t>),
+             py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldInt32",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &, std::int32_t>(
+                 &las::Point::SetExtraBytesField<std::int32_t>),
+             py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldUInt64",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &, std::uint64_t>(
+                 &las::Point::SetExtraBytesField<std::uint64_t>),
+             py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldInt64",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &, std::int64_t>(
+                 &las::Point::SetExtraBytesField<std::int64_t>),
+             py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldFloat32",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &, float>(
+                 &las::Point::SetExtraBytesField<float>),
+             py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldFloat64",
+             py::overload_cast<const copc::las::EbVlr &, const std::string &, double>(
+                 &las::Point::SetExtraBytesField<double>),
+             py::arg("vlr"), py::arg("name"), py::arg("data"))
         .def("HasRgb", &las::Point::HasRgb)
         .def("HasNir", &las::Point::HasNir)
         .def("ToPointFormat", &las::Point::ToPointFormat, py::arg("point_format_id"))
@@ -354,6 +435,33 @@ PYBIND11_MODULE(_core, m)
             throw py::index_error();
         return i;
     };
+
+    py::class_<las::EbVlr::ebfield>(m, "EbField")
+        .def(py::init<>())
+        .def_readwrite("data_type", &las::EbVlr::ebfield::data_type)
+        .def_readwrite("options", &las::EbVlr::ebfield::options)
+        .def_readwrite("name", &las::EbVlr::ebfield::name)
+        .def_property(
+            "no_data", [](const las::EbVlr::ebfield &self) { return self.no_data[0]; },
+            [](las::EbVlr::ebfield &self, double value) { self.no_data[0] = value; })
+        .def_property(
+            "minval", [](const las::EbVlr::ebfield &self) { return self.minval[0]; },
+            [](las::EbVlr::ebfield &self, double value) { self.minval[0] = value; })
+        .def_property(
+            "maxval", [](const las::EbVlr::ebfield &self) { return self.maxval[0]; },
+            [](las::EbVlr::ebfield &self, double value) { self.maxval[0] = value; })
+        .def_property(
+            "scale", [](const las::EbVlr::ebfield &self) { return self.scale[0]; },
+            [](las::EbVlr::ebfield &self, double value) { self.scale[0] = value; })
+        .def_property(
+            "offset", [](const las::EbVlr::ebfield &self) { return self.offset[0]; },
+            [](las::EbVlr::ebfield &self, double value) { self.offset[0] = value; })
+        .def_readwrite("description", &las::EbVlr::ebfield::description);
+
+    py::class_<las::EbVlr>(m, "EbVlr")
+        .def(py::init<int>())
+        .def_readonly("items", &las::EbVlr::items)
+        .def("add_field", py::overload_cast<const las::EbVlr::ebfield &>(&las::EbVlr::addField), py::arg("field"));
 
     py::class_<las::Points>(m, "Points")
         .def(py::init<const uint8_t &, const uint16_t &>(),
@@ -392,6 +500,26 @@ PYBIND11_MODULE(_core, m)
         .def("Unpack", py::overload_cast<const std::vector<char> &, const las::LasHeader &>(&las::Points::Unpack))
         .def("Unpack", py::overload_cast<const std::vector<char> &, const int8_t &, const uint16_t &, const Vector3 &,
                                          const Vector3 &>(&las::Points::Unpack))
+        .def("GetExtraBytesFieldUInt8", &las::Points::GetExtraBytesField<std::uint8_t>, py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldInt8", &las::Points::GetExtraBytesField<std::int8_t>, py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldUInt16", &las::Points::GetExtraBytesField<std::uint16_t>, py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldInt16", &las::Points::GetExtraBytesField<std::int16_t>, py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldUInt32", &las::Points::GetExtraBytesField<std::uint32_t>, py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldInt32", &las::Points::GetExtraBytesField<std::int32_t>, py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldUInt64", &las::Points::GetExtraBytesField<std::uint64_t>, py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldInt64", &las::Points::GetExtraBytesField<std::int64_t>, py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldFloat32", &las::Points::GetExtraBytesField<float>, py::arg("vlr"), py::arg("name"))
+        .def("GetExtraBytesFieldFloat64", &las::Points::GetExtraBytesField<double>, py::arg("vlr"), py::arg("name"))
+        .def("SetExtraBytesFieldUInt8", &las::Points::SetExtraBytesField<std::uint8_t>, py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldInt8", &las::Points::SetExtraBytesField<std::int8_t>, py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldUInt16", &las::Points::SetExtraBytesField<std::uint16_t>, py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldInt16", &las::Points::SetExtraBytesField<std::int16_t>, py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldUInt32", &las::Points::SetExtraBytesField<std::uint32_t>, py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldInt32", &las::Points::SetExtraBytesField<std::int32_t>, py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldUInt64", &las::Points::SetExtraBytesField<std::uint64_t>, py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldInt64", &las::Points::SetExtraBytesField<std::int64_t>, py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldFloat32", &las::Points::SetExtraBytesField<float>, py::arg("vlr"), py::arg("name"), py::arg("data"))
+        .def("SetExtraBytesFieldFloat64", &las::Points::SetExtraBytesField<double>, py::arg("vlr"), py::arg("name"), py::arg("data"))
         /// Bare bones interface
         .def("__getitem__",
              [wrap_i](const las::Points &s, DiffType i) {
@@ -446,33 +574,6 @@ PYBIND11_MODULE(_core, m)
              })
         .def("__str__", &las::Points::ToString)
         .def("__repr__", &las::Points::ToString);
-
-    py::class_<las::EbVlr::ebfield>(m, "EbField")
-        .def(py::init<>())
-        .def_readwrite("data_type", &las::EbVlr::ebfield::data_type)
-        .def_readwrite("options", &las::EbVlr::ebfield::options)
-        .def_readwrite("name", &las::EbVlr::ebfield::name)
-        .def_property(
-            "no_data", [](const las::EbVlr::ebfield &self) { return self.no_data[0]; },
-            [](las::EbVlr::ebfield &self, double value) { self.no_data[0] = value; })
-        .def_property(
-            "minval", [](const las::EbVlr::ebfield &self) { return self.minval[0]; },
-            [](las::EbVlr::ebfield &self, double value) { self.minval[0] = value; })
-        .def_property(
-            "maxval", [](const las::EbVlr::ebfield &self) { return self.maxval[0]; },
-            [](las::EbVlr::ebfield &self, double value) { self.maxval[0] = value; })
-        .def_property(
-            "scale", [](const las::EbVlr::ebfield &self) { return self.scale[0]; },
-            [](las::EbVlr::ebfield &self, double value) { self.scale[0] = value; })
-        .def_property(
-            "offset", [](const las::EbVlr::ebfield &self) { return self.offset[0]; },
-            [](las::EbVlr::ebfield &self, double value) { self.offset[0] = value; })
-        .def_readwrite("description", &las::EbVlr::ebfield::description);
-
-    py::class_<las::EbVlr>(m, "EbVlr")
-        .def(py::init<int>())
-        .def_readwrite("items", &las::EbVlr::items)
-        .def("add_field", py::overload_cast<const las::EbVlr::ebfield &>(&las::EbVlr::addField), py::arg("field"));
 
     py::class_<las::LazConfig, std::shared_ptr<las::LazConfig>>(m, "LazConfig")
         .def_property_readonly("las_header", &las::LazConfig::LasHeader)

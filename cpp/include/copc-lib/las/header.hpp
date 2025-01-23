@@ -63,6 +63,7 @@ class LasHeader
 
     int8_t PointFormatId() const { return point_format_id_; }
     uint16_t PointRecordLength() const { return point_record_length_; }
+    void PointRecordLength(uint16_t point_record_length) { point_record_length_ = point_record_length; }
     Vector3 Scale() const { return scale_; }
     Vector3 Offset() const { return offset_; }
     uint64_t PointCount() const { return point_count_; }

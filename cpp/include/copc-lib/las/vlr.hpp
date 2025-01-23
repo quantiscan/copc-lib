@@ -18,6 +18,25 @@ static const int EVLR_HEADER_SIZE = 60;
 
 // Gets the sum of the byte size the extra bytes will take up, for calculating point_record_len
 int NumBytesFromExtraBytes(const std::vector<EbVlr::ebfield> &items);
+uint8_t FieldToByteLength(const copc::las::EbVlr::ebfield &field);
+
+std::size_t EbVlrItemToPosition(const EbVlr &vlr, const std::string &name);
+
+template <typename T> void CheckIfNoMismatch(const copc::las::EbVlr &extra_bytes_vlr, const std::string &name)
+{
+    auto result = std::find_if(extra_bytes_vlr.items.begin(), extra_bytes_vlr.items.end(),
+                               [&name](const EbVlr::ebfield &item) { return item.name == name; });
+    if (result == extra_bytes_vlr.items.end())
+    {
+        throw std::runtime_error("No extra bytes field with that name found");
+    }
+
+    auto item = *result;
+    if (FieldToByteLength(item) != sizeof(T))
+    {
+        throw std::runtime_error("Data size and data_type mismatch");
+    }
+}
 
 class VlrHeader : public lazperf::evlr_header
 {
@@ -25,7 +44,7 @@ class VlrHeader : public lazperf::evlr_header
     bool evlr_flag{false};
 
     VlrHeader() = default;
-    VlrHeader(const lazperf::evlr_header &evlr_header) : evlr_flag(true), lazperf::evlr_header(evlr_header){};
+    VlrHeader(const lazperf::evlr_header &evlr_header) : evlr_flag(true), lazperf::evlr_header(evlr_header) {};
     VlrHeader(const lazperf::vlr_header &vlr_header);
     VlrHeader(const VlrHeader &vlr_header);
 

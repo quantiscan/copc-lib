@@ -226,6 +226,38 @@ class Points
         return points;
     }
 
+    template <typename T>
+    std::vector<T> GetExtraBytesField(const copc::las::EbVlr &extra_bytes_vlr, const std::string &name) const
+    {
+        CheckIfNoMismatch<T>(extra_bytes_vlr, name);
+        const auto position = EbVlrItemToPosition(extra_bytes_vlr, name);
+
+        std::vector<T> out;
+        out.resize(Size());
+        std::transform(points_.begin(), points_.end(), out.begin(),
+                       [position](const std::shared_ptr<Point> &p) { return p->GetExtraBytesField<T>(position); });
+        return out;
+    }
+    template <typename T>
+    void SetExtraBytesField(const copc::las::EbVlr &extra_bytes_vlr, const std::string &name, const std::vector<T> &in)
+    {
+        CheckIfNoMismatch<T>(extra_bytes_vlr, name);
+
+        if (in.size() != Size())
+        {
+            throw std::runtime_error("ExtraBytesField setter array must be same size as Points array!");
+        }
+
+        const auto position = EbVlrItemToPosition(extra_bytes_vlr, name);
+        const auto ebSize = NumBytesFromExtraBytes(extra_bytes_vlr.items);
+        point_record_length_ = PointBaseByteSize(point_format_id_) + ebSize;
+
+        for (std::size_t i = 0; i < points_.size(); ++i)
+        {
+            points_[i]->SetExtraBytesField(position, ebSize, in[i]);
+        }
+    }
+
   private:
     std::vector<std::shared_ptr<Point>> points_;
     int8_t point_format_id_;

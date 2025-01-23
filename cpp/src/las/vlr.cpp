@@ -1,23 +1,44 @@
 #include "copc-lib/las/vlr.hpp"
 #include "copc-lib/las/utils.hpp"
 
+#include <numeric>
+
 namespace copc::las
 {
 
-uint8_t EXTRA_BYTE_DATA_TYPE[31]{0, 1,  1,  2, 2,  4, 4, 8, 8, 4,  8,  2,  2,  4,  4, 8,
-                                 8, 16, 16, 8, 16, 3, 3, 6, 6, 12, 12, 24, 24, 12, 24};
+std::array<uint8_t, 31> EXTRA_BYTE_DATA_TYPE{0, 1,  1,  2, 2,  4, 4, 8, 8, 4,  8,  2,  2,  4,  4, 8,
+                                             8, 16, 16, 8, 16, 3, 3, 6, 6, 12, 12, 24, 24, 12, 24};
+
+uint8_t FieldToByteLength(const copc::las::EbVlr::ebfield &field)
+{
+    if (field.data_type == 0)
+    {
+        return field.options;
+    }
+
+    return EXTRA_BYTE_DATA_TYPE.at(field.data_type);
+}
 
 int NumBytesFromExtraBytes(const std::vector<EbVlr::ebfield> &items)
 {
-    int out = 0;
-    for (const auto &item : items)
+    return std::accumulate(items.begin(), items.end(), 0, [](const std::size_t &input, const EbVlr::ebfield field)
+                           { return input + FieldToByteLength(field); });
+}
+
+std::size_t EbVlrItemToPosition(const EbVlr &vlr, const std::string &name)
+{
+    std::size_t i = 0;
+    for (const auto &item : vlr.items)
     {
-        if (item.data_type == 0)
-            out += item.options;
-        else
-            out += EXTRA_BYTE_DATA_TYPE[item.data_type];
+        if (item.name == name)
+        {
+            return i;
+        }
+
+        i += FieldToByteLength(item);
     }
-    return out;
+
+    throw std::runtime_error("Name not found in VLR");
 }
 
 VlrHeader::VlrHeader(const lazperf::vlr_header &vlr_header) : evlr_flag(false)
