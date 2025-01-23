@@ -22,15 +22,6 @@ void ReaderExample()
          << "\tRoot Offset: " << copc_info.root_hier_offset << endl
          << "\tRoot Size: " << copc_info.root_hier_size << endl;
 
-    // Get the CopcInfo struct
-    auto copc_extents = reader.CopcConfig().CopcExtents();
-    cout << "Copc Extents (Min/Max): " << endl;
-    cout << "\tIntensity : (" << copc_extents.Intensity()->minimum << "/" << copc_extents.Intensity()->maximum << ")"
-         << endl
-         << "\tClassification : (" << copc_extents.Classification()->minimum << "/"
-         << copc_extents.Classification()->maximum << ")" << endl
-         << "\tGpsTime : (" << copc_extents.GpsTime()->minimum << "/" << copc_extents.GpsTime()->maximum << ")" << endl;
-
     // Get the WKT string
     cout << "WKT: " << reader.CopcConfig().Wkt() << endl;
 

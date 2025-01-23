@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <copc-lib/copc/copc_config.hpp>
 #include <copc-lib/geometry/vector3.hpp>
 #include <copc-lib/las/header.hpp>
@@ -18,10 +18,16 @@ TEST_CASE("LazConfig", "[LazConfig]")
     Vector3 test_offset(50, 50, 50);
     std::string test_wkt = "test_wkt";
 
-    las::EbVlr test_extra_bytes_vlr(num_eb_items);
-    test_extra_bytes_vlr.items[0].data_type = 0;
-    test_extra_bytes_vlr.items[0].options = 4;
-    test_extra_bytes_vlr.items[0].name = "eb1";
+    las::EbVlr test_extra_bytes_vlr;
+    test_extra_bytes_vlr.addField(
+        []()
+        {
+            auto field = lazperf::eb_vlr::ebfield();
+            field.data_type = 0;
+            field.options = 4;
+            field.name = "eb1";
+            return field;
+        }());
 
     std::string wkt(test_wkt);
 
@@ -50,22 +56,26 @@ TEST_CASE("CopcConfig_To_LazConfig")
     Vector3 test_offset(50, 50, 50);
     std::string test_wkt = "test_wkt";
 
-    las::EbVlr test_extra_bytes_vlr(num_eb_items);
-    test_extra_bytes_vlr.items[0].data_type = 0;
-    test_extra_bytes_vlr.items[0].options = 4;
-    test_extra_bytes_vlr.items[0].name = "eb1";
+    las::EbVlr test_extra_bytes_vlr;
+    test_extra_bytes_vlr.addField(
+        []()
+        {
+            auto field = lazperf::eb_vlr::ebfield();
+            field.data_type = 0;
+            field.options = 4;
+            field.name = "eb1";
+            return field;
+        }());
 
     CopcInfo copc_info;
     copc_info.spacing = test_spacing;
-    CopcExtents copc_extents(point_format_id, num_eb_items);
-    copc_extents.Intensity()->minimum = test_intensity_min;
-    copc_extents.Intensity()->maximum = test_intensity_max;
+
     std::string wkt(test_wkt);
 
     las::LasHeader header(point_format_id, las::PointBaseByteSize(point_format_id) + test_extra_bytes_vlr.size(),
                           test_scale, test_offset, true);
 
-    CopcConfig copc_cfg(header, copc_info, copc_extents, wkt, test_extra_bytes_vlr);
+    CopcConfig copc_cfg(header, copc_info, wkt, test_extra_bytes_vlr);
     las::LazConfigWriter cfg(copc_cfg);
 
     REQUIRE(cfg.LasHeader()->PointFormatId() == point_format_id);
@@ -99,10 +109,16 @@ TEST_CASE("LazConfigWriter", "[LazConfigWriter]")
     Vector3 test_max(5, 6, 7);
     std::string test_wkt = "test_wkt";
 
-    las::EbVlr test_extra_bytes_vlr(num_eb_items);
-    test_extra_bytes_vlr.items[0].data_type = 0;
-    test_extra_bytes_vlr.items[0].options = 4;
-    test_extra_bytes_vlr.items[0].name = "eb1";
+    las::EbVlr test_extra_bytes_vlr;
+    test_extra_bytes_vlr.addField(
+        []()
+        {
+            auto field = lazperf::eb_vlr::ebfield();
+            field.data_type = 0;
+            field.options = 4;
+            field.name = "eb1";
+            return field;
+        }());
 
     SECTION("Constructor with default arguments")
     {

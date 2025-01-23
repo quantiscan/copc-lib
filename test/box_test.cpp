@@ -1,6 +1,6 @@
 #include <limits>
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <copc-lib/geometry/box.hpp>
 #include <copc-lib/geometry/vector3.hpp>
 #include <copc-lib/hierarchy/key.hpp>

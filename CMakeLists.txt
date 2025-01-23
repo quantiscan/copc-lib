@@ -14,8 +14,8 @@ include(GNUInstallDirs)
 # Shared/Dynamic or Static library?
 option(BUILD_SHARED_LIBS "Build libraries as shared as opposed to static" ON)
 
-option(WITH_TESTS "Build test and example files." OFF)
-option(WITH_PYTHON "Build python bindings." OFF)
+option(WITH_TESTS "Build test and example files." ON)
+option(WITH_PYTHON "Build python bindings." ON)
 
 if (SKBUILD)
     set(WITH_PYTHON ON)
@@ -84,10 +84,14 @@ if(WITH_TESTS)
 endif()
 
 ## Find required packages
+include(FetchContent)
+FetchContent_Populate(
+    LAZPERF
+    GIT_REPOSITORY https://github.com/hobuinc/laz-perf.git
+    GIT_TAG        2b68700d33bf981d257d6101d96714620c64019c  # latest master
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/laz-perf
+)
 
-set(LAZPERF_VERSION "3.0.0")
-# First, see if the repo is cloned locally, and if so, compile it
-# this is required for CI build of sdist
 if(EXISTS "${CMAKE_SOURCE_DIR}/libs/laz-perf")
     set(WITH_TEST_TEMP ${WITH_TESTS})
     set(WITH_TESTS OFF) # never build lazperf tests

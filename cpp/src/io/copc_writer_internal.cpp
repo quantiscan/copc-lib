@@ -4,7 +4,6 @@
 #include <stdexcept>
 #include <string>
 
-#include "copc-lib/copc/extents.hpp"
 #include "copc-lib/hierarchy/internal/hierarchy.hpp"
 #include "copc-lib/io/internal/copc_writer_internal.hpp"
 
@@ -22,15 +21,7 @@ size_t WriterInternal::OffsetToPointData() const
     // COPC VLR
     size_t copc_info_vlr_size = (las::VLR_HEADER_SIZE + CopcInfo::VLR_SIZE_BYTES);
 
-    // COPC Extents VLR
-    size_t copc_extents_vlr_size =
-        CopcExtents::ByteSize(GetConfig()->LasHeader()->PointFormatId(), GetConfig()->ExtraBytesVlr().items.size());
-    copc_extents_vlr_size += las::VLR_HEADER_SIZE;
-    // If we store extended stats we need two extents VLRs
-    if (GetConfig()->CopcExtents()->HasExtendedStats())
-        copc_extents_vlr_size *= 2;
-
-    return base_laz_offset + copc_info_vlr_size + copc_extents_vlr_size;
+    return base_laz_offset + copc_info_vlr_size;
 }
 
 WriterInternal::WriterInternal(std::ostream &out_stream, const std::shared_ptr<CopcConfigWriter> &copc_config_writer,
@@ -70,34 +61,12 @@ void WriterInternal::Close()
 // Writes the LAS header and VLRs
 void WriterInternal::WriteHeader()
 {
-    WriteLasHeader(GetConfig()->CopcExtents()->HasExtendedStats());
+    WriteLasHeader();
 
     // Write the COPC Info VLR.
-    lazperf::copc_info_vlr copc_info_vlr = GetConfig()->CopcInfo()->ToLazPerf(*GetConfig()->CopcExtents()->GpsTime());
+    lazperf::copc_info_vlr copc_info_vlr = GetConfig()->CopcInfo()->ToLazPerf();
     copc_info_vlr.header().write(out_stream_);
     copc_info_vlr.write(out_stream_);
-
-    // Write the COPC Extents VLR.
-    auto extents_vlr =
-        GetConfig()->CopcExtents()->ToLazPerf({GetConfig()->LasHeader()->min.x, GetConfig()->LasHeader()->max.x},
-                                              {GetConfig()->LasHeader()->min.y, GetConfig()->LasHeader()->max.y},
-                                              {GetConfig()->LasHeader()->min.z, GetConfig()->LasHeader()->max.z});
-    extents_vlr.header().write(out_stream_);
-    extents_vlr.write(out_stream_);
-
-    // Write the COPC Extended stats VLR.
-    if (GetConfig()->CopcExtents()->HasExtendedStats())
-    {
-        auto extended_stats_vlr = GetConfig()->CopcExtents()->ToLazPerfExtended();
-
-        auto header = extended_stats_vlr.header();
-        header.user_id = "rock_robotic";
-        header.record_id = 10001;
-        header.description = "COPC extended stats";
-
-        header.write(out_stream_);
-        extended_stats_vlr.write(out_stream_);
-    }
 
     WriteLazAndEbVlrs();
 

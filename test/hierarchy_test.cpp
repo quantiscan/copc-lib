@@ -1,7 +1,7 @@
 #include <cstring>
 #include <sstream>
 
-#include "catch2/catch.hpp"
+#include <catch2/catch_all.hpp>
 #include <copc-lib/io/copc_reader.hpp>
 
 using namespace copc;

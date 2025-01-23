@@ -30,7 +30,7 @@ class LasHeader
     LasHeader(int8_t point_format_id, uint16_t point_record_length, const Vector3 &scale, const Vector3 &offset,
               bool copc_flag)
         : point_format_id_(point_format_id), point_record_length_{point_record_length}, scale_(scale), offset_(offset),
-          copc_flag_(copc_flag){};
+          copc_flag_(copc_flag) {};
 
     // Constructor for python pickling
     // TODO: Add a CMAKE flag to only compile python-specific code when python is compiled
@@ -39,7 +39,7 @@ class LasHeader
               uint32_t evlr_count, bool copc_flag)
         : point_format_id_(point_format_id), point_record_length_(point_record_length), point_offset_(point_offset),
           point_count_(point_count), vlr_count_(vlr_count), scale_(scale), offset_(offset), evlr_offset_(evlr_offset),
-          evlr_count_(evlr_count), copc_flag_(copc_flag){};
+          evlr_count_(evlr_count), copc_flag_(copc_flag) {};
 
     // Copy constructor with modification of protected attributes
     LasHeader(const LasHeader &header, int8_t point_format_id, uint16_t point_record_length, const Vector3 &scale,
@@ -50,7 +50,7 @@ class LasHeader
 
     static LasHeader FromLazPerf(const lazperf::header14 &header);
     lazperf::header14 ToLazPerf(uint32_t point_offset, uint64_t point_count, uint64_t evlr_offset, uint32_t evlr_count,
-                                bool eb_flag, bool extended_stats_flag) const;
+                                bool eb_flag) const;
 
     std::string ToString() const;
     friend std::ostream &operator<<(std::ostream &os, LasHeader const &value)
@@ -63,6 +63,7 @@ class LasHeader
 
     int8_t PointFormatId() const { return point_format_id_; }
     uint16_t PointRecordLength() const { return point_record_length_; }
+    void PointRecordLength(uint16_t point_record_length) { point_record_length_ = point_record_length; }
     Vector3 Scale() const { return scale_; }
     Vector3 Offset() const { return offset_; }
     uint64_t PointCount() const { return point_count_; }

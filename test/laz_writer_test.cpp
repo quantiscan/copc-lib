@@ -1,7 +1,7 @@
 #include <cstring>
 #include <string>
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <copc-lib/geometry/vector3.hpp>
 #include <copc-lib/io/laz_reader.hpp>
 #include <copc-lib/io/laz_writer.hpp>
@@ -165,10 +165,16 @@ TEST_CASE("LAZ Writer EBs", "[LAZ Writer]")
     SECTION("Data type 0")
     {
         stringstream out_stream;
-        las::EbVlr eb_vlr(1); // Always initialize with the ebCount constructor
-        // don't make ebfields yourself unless you set their names correctly
-        eb_vlr.items[0].data_type = 0;
-        eb_vlr.items[0].options = 4;
+        las::EbVlr eb_vlr;
+        eb_vlr.addField(
+            []()
+            {
+                auto field = lazperf::eb_vlr::ebfield();
+                field.data_type = 0;
+                field.options = 4;
+                field.name = "FIELD_0";
+                return field;
+            }());
         las::LazConfigWriter cfg(7, {}, {}, {}, eb_vlr);
         laz::LazWriter writer(out_stream, cfg);
 
@@ -191,8 +197,14 @@ TEST_CASE("LAZ Writer EBs", "[LAZ Writer]")
     SECTION("Data type 29")
     {
         stringstream out_stream;
-        las::EbVlr eb_vlr(1);
-        eb_vlr.items[0].data_type = 29;
+        las::EbVlr eb_vlr;
+        eb_vlr.addField(
+            []()
+            {
+                auto field = lazperf::eb_vlr::ebfield();
+                field.data_type = 29;
+                return field;
+            }());
         las::LazConfigWriter cfg(7, {}, {}, {}, eb_vlr);
         laz::LazWriter writer(out_stream, cfg);
 

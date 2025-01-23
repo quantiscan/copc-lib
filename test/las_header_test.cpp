@@ -1,6 +1,6 @@
 #include <vector>
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <copc-lib/io/copc_reader.hpp>
 #include <copc-lib/las/header.hpp>
 #include <copc-lib/las/point.hpp>
@@ -19,10 +19,16 @@ TEST_CASE("Test constructor", "[LasHeader]")
     Vector3 test_offset(50, 50, 50);
     std::string test_wkt = "test_wkt";
 
-    las::EbVlr test_extra_bytes_vlr(num_eb_items);
-    test_extra_bytes_vlr.items[0].data_type = 0;
-    test_extra_bytes_vlr.items[0].options = 4;
-    test_extra_bytes_vlr.items[0].name = "eb1";
+    las::EbVlr test_extra_bytes_vlr;
+    test_extra_bytes_vlr.addField(
+        []()
+        {
+            auto field = lazperf::eb_vlr::ebfield();
+            field.data_type = 0;
+            field.options = 4;
+            field.name = "eb1";
+            return field;
+        }());
 
     SECTION("COPC flag")
     {
@@ -33,7 +39,7 @@ TEST_CASE("Test constructor", "[LasHeader]")
                                   test_offset, false);
 
         REQUIRE(laz_header.IsCopc() == false);
-        REQUIRE(laz_header.ToLazPerf(380, 0, 390, 1, 0, false).vlr_count == 1);
+        REQUIRE(laz_header.ToLazPerf(380, 0, 390, 1, false).vlr_count == 1);
 
         // In the case of a COPC file, the LAS header should have a true COPC flag, and three VLRs when no EBs are
         // present
@@ -42,7 +48,7 @@ TEST_CASE("Test constructor", "[LasHeader]")
                                    test_offset, true);
 
         REQUIRE(copc_header.IsCopc() == true);
-        REQUIRE(copc_header.ToLazPerf(380, 0, 390, 1, 0, false).vlr_count == 3);
+        REQUIRE(copc_header.ToLazPerf(380, 0, 390, 1, false).vlr_count == 2);
     }
 
     SECTION("GPS Time Type Bit")
@@ -65,7 +71,7 @@ TEST_CASE("Test reader and conversions", "[LasHeader]")
         auto las_header = reader.CopcConfig().LasHeader();
         auto lazperf_header = las_header.ToLazPerf(
             las_header.PointOffset(), las_header.PointCount(), las_header.EvlrOffset(), las_header.EvlrCount(),
-            las_header.EbByteSize(), reader.CopcConfig().CopcExtents().HasExtendedStats());
+            las_header.EbByteSize());
         // Correct the bitshift happening in ToLazPerf for test purpose
         lazperf_header.point_format_id = las_header.PointFormatId();
         auto las_header_origin = las::LasHeader::FromLazPerf(lazperf_header);

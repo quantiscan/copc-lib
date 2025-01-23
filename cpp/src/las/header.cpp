@@ -96,7 +96,7 @@ LasHeader LasHeader::FromLazPerf(const lazperf::header14 &header)
     return h;
 }
 lazperf::header14 LasHeader::ToLazPerf(uint32_t point_offset, uint64_t point_count, uint64_t evlr_offset,
-                                       uint32_t evlr_count, bool eb_flag, bool extended_stats_flag) const
+                                       uint32_t evlr_count, bool eb_flag) const
 {
     lazperf::header14 h;
     h.file_source_id = file_source_id;
@@ -115,17 +115,9 @@ lazperf::header14 LasHeader::ToLazPerf(uint32_t point_offset, uint64_t point_cou
     // If there are Extra Bytes, count an extra VLR
     if (eb_flag)
         h.vlr_count++;
-    // If the header is part of a COPC file, add two extra VLRs for info and extents
+    // If the header is part of a COPC file, add a COPC VLR
     if (copc_flag_)
-        h.vlr_count += 2;
-    // If there are Extended Stats, count an extra VLR
-    if (extended_stats_flag)
-    {
-        if (copc_flag_)
-            h.vlr_count++;
-        else
-            throw std::runtime_error("LasHeader::ToLazPerf: A non-copc las header can't have an extended stats VLR");
-    }
+        h.vlr_count++;
     h.point_format_id = point_format_id_;
     h.point_format_id |= (1 << 7); // Do the lazperf trick
     h.point_record_length = point_record_length_;

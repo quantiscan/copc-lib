@@ -1,5 +1,6 @@
-import copclib as copc
 import os
+
+import copclib as copc
 
 DATADIRECTORY = os.path.join(os.path.dirname(__file__), "..", "test", "data")
 
@@ -22,22 +23,6 @@ def reader_example():
     print("\tSpacing: %d" % copc_info.spacing)
     print("\tRoot Offset: %d" % copc_info.root_hier_offset)
     print("\tRoot Size: %d" % copc_info.root_hier_size)
-
-    # Get the Copc Extents
-    copc_extents = reader.copc_config.copc_extents
-    print("Copc Extents (Min/Max): ")
-    print(
-        "\tIntensity: (%f,%f)"
-        % (copc_extents.intensity.minimum, copc_extents.intensity.maximum)
-    )
-    print(
-        "\tClassification: (%f,%f)"
-        % (copc_extents.classification.minimum, copc_extents.classification.maximum)
-    )
-    print(
-        "\tUser Data: (%f,%f)"
-        % (copc_extents.user_data.minimum, copc_extents.user_data.maximum)
-    )
 
     # Get the WKT string
     print("WKT: %s" % reader.copc_config.wkt)

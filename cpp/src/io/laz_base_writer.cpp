@@ -24,11 +24,11 @@ size_t BaseWriter::OffsetToPointData() const
     return las::LasHeader::HEADER_SIZE_BYTES + las_eb_vlr_size + laz_vlr_size;
 }
 
-void BaseWriter::WriteLasHeader(bool extended_stats_flag)
+void BaseWriter::WriteLasHeader()
 {
     // Write LAS header
     auto las_header = config_->LasHeader().ToLazPerf(OffsetToPointData(), point_count_, evlr_offset_, evlr_count_,
-                                                     config_->LasHeader().EbByteSize(), extended_stats_flag);
+                                                     config_->LasHeader().EbByteSize());
     out_stream_.seekp(0);
     las_header.write(out_stream_);
 }
@@ -54,7 +54,7 @@ void BaseWriter::WriteLazAndEbVlrs()
 // Writes the LAS header and VLRs
 void BaseWriter::WriteHeader()
 {
-    WriteLasHeader(false);
+    WriteLasHeader();
 
     WriteLazAndEbVlrs();
 

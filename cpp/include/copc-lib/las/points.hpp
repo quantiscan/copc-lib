@@ -79,7 +79,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("X setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->X(in[i]);
     }
 
@@ -96,7 +96,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("Y setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->Y(in[i]);
     }
 
@@ -113,7 +113,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("Z setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->Z(in[i]);
     }
 
@@ -130,7 +130,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("Classification setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->Classification(in[i]);
     }
 
@@ -147,7 +147,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("PointSourceId setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->PointSourceId(in[i]);
     }
 
@@ -164,7 +164,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("Red setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->Red(in[i]);
     }
 
@@ -181,7 +181,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("Green setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->Green(in[i]);
     }
 
@@ -198,7 +198,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("Blue setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->Blue(in[i]);
     }
 
@@ -216,7 +216,6 @@ class Points
     // Return sub-set of points that fall within the box
     std::vector<std::shared_ptr<Point>> GetWithin(const Box &box)
     {
-
         std::vector<std::shared_ptr<Point>> points;
 
         for (const auto &point : points_)
@@ -225,6 +224,38 @@ class Points
                 points.push_back(point);
         }
         return points;
+    }
+
+    template <typename T>
+    std::vector<T> GetExtraBytesField(const copc::las::EbVlr &extra_bytes_vlr, const std::string &name) const
+    {
+        CheckIfNoMismatch<T>(extra_bytes_vlr, name);
+        const auto position = EbVlrItemToPosition(extra_bytes_vlr, name);
+
+        std::vector<T> out;
+        out.resize(Size());
+        std::transform(points_.begin(), points_.end(), out.begin(),
+                       [position](const std::shared_ptr<Point> &p) { return p->GetExtraBytesField<T>(position); });
+        return out;
+    }
+    template <typename T>
+    void SetExtraBytesField(const copc::las::EbVlr &extra_bytes_vlr, const std::string &name, const std::vector<T> &in)
+    {
+        CheckIfNoMismatch<T>(extra_bytes_vlr, name);
+
+        if (in.size() != Size())
+        {
+            throw std::runtime_error("ExtraBytesField setter array must be same size as Points array!");
+        }
+
+        const auto position = EbVlrItemToPosition(extra_bytes_vlr, name);
+        const auto ebSize = NumBytesFromExtraBytes(extra_bytes_vlr.items);
+        point_record_length_ = PointBaseByteSize(point_format_id_) + ebSize;
+
+        for (std::size_t i = 0; i < points_.size(); ++i)
+        {
+            points_[i]->SetExtraBytesField(position, ebSize, in[i]);
+        }
     }
 
   private:

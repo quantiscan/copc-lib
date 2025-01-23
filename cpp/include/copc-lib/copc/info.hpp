@@ -2,7 +2,6 @@
 #define COPCLIB_COPC_INFO_H_
 #include <string>
 
-#include "copc-lib/copc/extents.hpp"
 #include <lazperf/vlr.hpp>
 
 namespace copc
@@ -18,7 +17,7 @@ class CopcInfo
 
     CopcInfo(const lazperf::copc_info_vlr &copc_info_vlr);
 
-    lazperf::copc_info_vlr ToLazPerf(const CopcExtent &gps_time) const;
+    lazperf::copc_info_vlr ToLazPerf() const;
 
     std::string ToString() const;
     friend std::ostream &operator<<(std::ostream &os, CopcInfo const &value)
@@ -34,6 +33,8 @@ class CopcInfo
     double spacing{0};
     uint64_t root_hier_offset{0};
     uint64_t root_hier_size{0};
+    double gpstime_minimum{0};
+    double gpstime_maximum{0};
 };
 } // namespace copc
 #endif // COPCLIB_COPC_INFO_H_

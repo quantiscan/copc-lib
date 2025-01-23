@@ -1,6 +1,5 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include <copc-lib/copc/copc_config.hpp>
-#include <copc-lib/copc/extents.hpp>
 #include <copc-lib/geometry/vector3.hpp>
 #include <copc-lib/las/header.hpp>
 #include <copc-lib/las/laz_config.hpp>
@@ -22,16 +21,20 @@ TEST_CASE("CopcConfig", "[CopcConfig]")
     Vector3 test_offset(50, 50, 50);
     std::string test_wkt = "test_wkt";
 
-    las::EbVlr test_extra_bytes_vlr(num_eb_items);
-    test_extra_bytes_vlr.items[0].data_type = 0;
-    test_extra_bytes_vlr.items[0].options = 4;
-    test_extra_bytes_vlr.items[0].name = "eb1";
+    las::EbVlr test_extra_bytes_vlr;
+    test_extra_bytes_vlr.addField(
+        []()
+        {
+            auto field = lazperf::eb_vlr::ebfield();
+            field.data_type = 0;
+            field.options = 4;
+            field.name = "eb1";
+            return field;
+        }());
 
     CopcInfo copc_info;
     copc_info.spacing = test_spacing;
-    CopcExtents copc_extents(point_format_id, num_eb_items);
-    copc_extents.Intensity()->minimum = test_intensity_min;
-    copc_extents.Intensity()->maximum = test_intensity_max;
+
     std::string wkt(test_wkt);
 
     las::LasHeader header(point_format_id, las::PointBaseByteSize(point_format_id) + test_extra_bytes_vlr.size(),
@@ -39,15 +42,13 @@ TEST_CASE("CopcConfig", "[CopcConfig]")
 
     SECTION("LasHeader constructor")
     {
-        CopcConfig cfg(header, copc_info, copc_extents, wkt, test_extra_bytes_vlr);
+        CopcConfig cfg(header, copc_info, wkt, test_extra_bytes_vlr);
 
         REQUIRE(cfg.LasHeader().PointFormatId() == point_format_id);
         REQUIRE(cfg.LasHeader().Scale() == test_scale);
         REQUIRE(cfg.LasHeader().Offset() == test_offset);
 
         REQUIRE(cfg.CopcInfo().spacing == test_spacing);
-
-        REQUIRE(*cfg.CopcExtents().Intensity() == CopcExtent(test_intensity_min, test_intensity_max));
 
         REQUIRE(cfg.Wkt() == test_wkt);
 
@@ -57,15 +58,13 @@ TEST_CASE("CopcConfig", "[CopcConfig]")
     SECTION("LasHeader constructor")
     {
         las::LazConfig laz_cfg(header, wkt, test_extra_bytes_vlr);
-        CopcConfig cfg(laz_cfg, copc_info, copc_extents);
+        CopcConfig cfg(laz_cfg, copc_info);
 
         REQUIRE(cfg.LasHeader().PointFormatId() == point_format_id);
         REQUIRE(cfg.LasHeader().Scale() == test_scale);
         REQUIRE(cfg.LasHeader().Offset() == test_offset);
 
         REQUIRE(cfg.CopcInfo().spacing == test_spacing);
-
-        REQUIRE(*cfg.CopcExtents().Intensity() == CopcExtent(test_intensity_min, test_intensity_max));
 
         REQUIRE(cfg.Wkt() == test_wkt);
 
@@ -86,10 +85,16 @@ TEST_CASE("CopcConfigWriter", "[CopcConfigWriter]")
     Vector3 test_max(5, 6, 7);
     std::string test_wkt = "test_wkt";
 
-    las::EbVlr test_extra_bytes_vlr(num_eb_items);
-    test_extra_bytes_vlr.items[0].data_type = 0;
-    test_extra_bytes_vlr.items[0].options = 4;
-    test_extra_bytes_vlr.items[0].name = "eb1";
+    las::EbVlr test_extra_bytes_vlr;
+    test_extra_bytes_vlr.addField(
+        []()
+        {
+            auto field = lazperf::eb_vlr::ebfield();
+            field.data_type = 0;
+            field.options = 4;
+            field.name = "eb1";
+            return field;
+        }());
 
     SECTION("Constructor with default arguments")
     {
@@ -100,8 +105,6 @@ TEST_CASE("CopcConfigWriter", "[CopcConfigWriter]")
         REQUIRE(cfg.LasHeader()->IsCopc() == true);
 
         REQUIRE(cfg.CopcInfo()->spacing == 0);
-
-        REQUIRE(*cfg.CopcExtents()->Intensity() == CopcExtent());
 
         REQUIRE(cfg.Wkt().empty());
 
@@ -118,8 +121,6 @@ TEST_CASE("CopcConfigWriter", "[CopcConfigWriter]")
         REQUIRE(cfg.LasHeader()->IsCopc() == true);
 
         REQUIRE(cfg.CopcInfo()->spacing == 0);
-
-        REQUIRE(*cfg.CopcExtents()->Intensity() == CopcExtent());
 
         REQUIRE(cfg.Wkt() == test_wkt);
 
@@ -138,9 +139,6 @@ TEST_CASE("CopcConfigWriter", "[CopcConfigWriter]")
             ss << copc_info;
         }
 
-        CopcExtents copc_extents(point_format_id, num_eb_items);
-        copc_extents.Intensity()->minimum = test_intensity_min;
-        copc_extents.Intensity()->maximum = test_intensity_max;
         std::string wkt(test_wkt);
 
         las::LasHeader header(point_format_id, las::PointBaseByteSize(point_format_id) + test_extra_bytes_vlr.size(),
@@ -148,18 +146,16 @@ TEST_CASE("CopcConfigWriter", "[CopcConfigWriter]")
 
         header.min = test_min;
 
-        CopcConfig original(header, copc_info, copc_extents, wkt, test_extra_bytes_vlr);
+        CopcConfig original(header, copc_info, wkt, test_extra_bytes_vlr);
 
         CopcConfigWriter copy(original);
 
         copy.LasHeader()->min = Vector3();
         copy.CopcInfo()->spacing = 1;
-        copy.CopcExtents()->Intensity()->minimum = 17;
 
         // Updating copy should not change original
         REQUIRE(original.LasHeader().min == test_min);
         REQUIRE(original.CopcInfo().spacing == test_spacing);
-        REQUIRE(original.CopcExtents().Intensity()->minimum == test_intensity_min);
     }
 
     SECTION("Updating Config Values")
@@ -175,11 +171,6 @@ TEST_CASE("CopcConfigWriter", "[CopcConfigWriter]")
         // Copc Info
         cfg.CopcInfo()->spacing = test_spacing;
         REQUIRE(cfg.CopcInfo()->spacing == test_spacing);
-
-        // Copc Extents
-        cfg.CopcExtents()->Intensity()->minimum = test_intensity_min;
-        cfg.CopcExtents()->Intensity()->maximum = test_intensity_max;
-        REQUIRE(*cfg.CopcExtents()->Intensity() == CopcExtent(test_intensity_min, test_intensity_max));
     }
 
     SECTION("Copy constructor")
@@ -190,11 +181,9 @@ TEST_CASE("CopcConfigWriter", "[CopcConfigWriter]")
 
         original.LasHeader()->min = test_min;
         original.CopcInfo()->spacing = test_spacing;
-        original.CopcExtents()->Intensity()->minimum = test_intensity_min;
 
         // Updating original should not change copy
         REQUIRE(copy.LasHeader()->min == Vector3());
         REQUIRE(copy.CopcInfo()->spacing == 0);
-        REQUIRE(copy.CopcExtents()->Intensity()->minimum == 0);
     }
 }

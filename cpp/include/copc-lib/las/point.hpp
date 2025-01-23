@@ -226,6 +226,39 @@ class Point
     void Pack(std::ostream &out_stream, const Vector3 &scale, const Vector3 &offset) const;
     void ToPointFormat(const int8_t &point_format_id);
 
+    template <typename T> T GetExtraBytesField(std::size_t from) const
+    {
+        return *reinterpret_cast<const T *const>(&extra_bytes_.data()[from]);
+    }
+
+    template <typename T> T GetExtraBytesField(const copc::las::EbVlr &extra_bytes_vlr, const std::string &name) const
+    {
+        CheckIfNoMismatch<T>(extra_bytes_vlr, name);
+        const auto position = EbVlrItemToPosition(extra_bytes_vlr, name);
+        return GetExtraBytesField<T>(position);
+    }
+
+    template <typename T> void SetExtraBytesField(std::size_t from, std::size_t totalEbSize, T value)
+    {
+        point_record_length_ = PointBaseByteSize(point_format_id_) + totalEbSize;
+        extra_bytes_.resize(totalEbSize);
+
+        auto bytes = reinterpret_cast<const uint8_t *const>(&value);
+
+        for (uint8_t i = 0; i < sizeof(T); ++i)
+        {
+            extra_bytes_.at(i + from) = bytes[i];
+        }
+    }
+
+    template <typename T>
+    void SetExtraBytesField(const copc::las::EbVlr &extra_bytes_vlr, const std::string &name, T value)
+    {
+        CheckIfNoMismatch<T>(extra_bytes_vlr, name);
+        const auto position = EbVlrItemToPosition(extra_bytes_vlr, name);
+        return SetExtraBytesField<T>(position, NumBytesFromExtraBytes(extra_bytes_vlr.items), value);
+    }
+
   protected:
     double x_scaled_{};
     double y_scaled_{};

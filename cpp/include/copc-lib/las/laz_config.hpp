@@ -51,7 +51,7 @@ class LazConfigWriter : public LazConfig
   public:
     LazConfigWriter(const int8_t &point_format_id, const Vector3 &scale = Vector3::DefaultScale(),
                     const Vector3 &offset = Vector3::DefaultOffset(), const std::string &wkt = "",
-                    const las::EbVlr &extra_bytes_vlr = las::EbVlr(0));
+                    const las::EbVlr &extra_bytes_vlr = las::EbVlr());
 
     LazConfigWriter(const LazConfig &laz_config)
         : LazConfig(las::LasHeader(laz_config.LasHeader(), false), laz_config.Wkt(), laz_config.ExtraBytesVlr())
