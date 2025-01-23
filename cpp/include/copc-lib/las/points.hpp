@@ -79,7 +79,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("X setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->X(in[i]);
     }
 
@@ -96,7 +96,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("Y setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->Y(in[i]);
     }
 
@@ -113,7 +113,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("Z setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->Z(in[i]);
     }
 
@@ -130,7 +130,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("Classification setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->Classification(in[i]);
     }
 
@@ -147,7 +147,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("PointSourceId setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->PointSourceId(in[i]);
     }
 
@@ -164,7 +164,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("Red setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->Red(in[i]);
     }
 
@@ -181,7 +181,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("Green setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->Green(in[i]);
     }
 
@@ -198,7 +198,7 @@ class Points
         if (in.size() != Size())
             throw std::runtime_error("Blue setter array must be same size as Points array!");
 
-        for (unsigned i = 0; i < points_.size(); ++i)
+        for (std::size_t i = 0; i < points_.size(); ++i)
             points_[i]->Blue(in[i]);
     }
 
@@ -216,7 +216,6 @@ class Points
     // Return sub-set of points that fall within the box
     std::vector<std::shared_ptr<Point>> GetWithin(const Box &box)
     {
-
         std::vector<std::shared_ptr<Point>> points;
 
         for (const auto &point : points_)
