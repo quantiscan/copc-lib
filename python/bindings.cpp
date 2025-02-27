@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstddef>
 #include <optional>
 #include <string>
 #include <utility>
@@ -424,14 +425,14 @@ PYBIND11_MODULE(_core, m)
         .def("__str__", &las::Point::ToString)
         .def("__repr__", &las::Point::ToString);
 
-    using DiffType = ssize_t;
-    using SizeType = size_t;
+    using DiffType = std::ptrdiff_t;
+    using SizeType = std::size_t;
 
     auto wrap_i = [](DiffType i, SizeType n)
     {
         if (i < 0)
             i += n;
-        if (i < 0 || (SizeType)i >= n)
+        if (i < 0 || static_cast<SizeType>(i) >= n)
             throw py::index_error();
         return i;
     };

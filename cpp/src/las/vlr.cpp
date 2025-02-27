@@ -1,6 +1,7 @@
 #include "copc-lib/las/vlr.hpp"
 #include "copc-lib/las/utils.hpp"
 
+#include <array>
 #include <numeric>
 
 namespace copc::las
