@@ -2,6 +2,7 @@
 #define COPCLIB_LAS_VLR_H_
 
 #include <cstring>
+#include <sstream>
 #include <stdexcept>
 #include <vector>
 
@@ -34,7 +35,9 @@ template <typename T> void CheckIfNoMismatch(const copc::las::EbVlr &extra_bytes
     auto item = *result;
     if (FieldToByteLength(item) != sizeof(T))
     {
-        throw std::runtime_error("Data size and data_type mismatch");
+        std::stringstream ss;
+        ss << "Data size " << sizeof(T) << " and data_type " << FieldToByteLength(item) << " mismatch";
+        throw std::runtime_error(ss.str());
     }
 }
 
