@@ -36,7 +36,7 @@ template <typename T> void CheckIfNoMismatch(const copc::las::EbVlr &extra_bytes
     if (FieldToByteLength(item) != sizeof(T))
     {
         std::stringstream ss;
-        ss << "Data size " << sizeof(T) << " and data_type " << int(FieldToByteLength(item)) << " mismatch";
+        ss << "Data size " << sizeof(T) << " and data_type "<< int(item.data_type) <<" length " << int(FieldToByteLength(item)) << " mismatch";
         throw std::runtime_error(ss.str());
     }
 }
